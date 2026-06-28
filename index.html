@@ -2,6 +2,7 @@
 <html lang="ja" style="background:#0e1117;">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark">
 <title>あの国だったら富裕層？（順位×年収カーブ版）</title>
 <style>
@@ -60,7 +61,10 @@
   .insight b{color:#3ddc97;}
   footer{max-width:920px; margin:30px auto; font-size:12px; color:var(--sub); line-height:1.7;}
   #chartWrap, #posChartWrap{width:100%; overflow-x:auto;}
-  svg text{fill:var(--sub); font-size:13px;}
+  svg text{fill:var(--sub); font-size:3.5vw;}
+  @media(min-width:600px){ svg text{font-size:14px;} }
+  svg text[font-weight="700"], svg text[font-weight="500"]{ font-size:3.8vw; }
+  @media(min-width:600px){ svg text[font-weight="700"], svg text[font-weight="500"]{ font-size:15px; } }
   details.secondary{margin-top:6px;}
   details.secondary summary{cursor:pointer; font-size:13px; color:var(--sub); margin-bottom:10px;}
 </style>
