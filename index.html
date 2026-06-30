@@ -416,7 +416,7 @@ function renderEquiv(income, selected){
   const jpP = percentile(income, jp);
   const wrap = document.getElementById('equivList');
   wrap.innerHTML='';
-  const others = selected.filter(c=>c.key!=='jp');
+  const others = selected.filter(c=>c.key!=='jp' && c.key!=='jp2');
   if(others.length===0){
     wrap.innerHTML = '<div style="color:var(--sub);font-size:13px;">比較したい国を上で選んでください。</div>';
     return;
@@ -517,28 +517,35 @@ function renderInsight(income, selected){
   const jp = COUNTRIES.find(c=>c.key==='jp');
   const world = COUNTRIES.find(c=>c.key==='world');
   const burundi = COUNTRIES.find(c=>c.key==='bi');
+  const us = COUNTRIES.find(c=>c.key==='us');
+  const phantom = COUNTRIES.find(c=>c.key==='jp2');
   const jpP = percentile(income, jp);
   const eqWorld = incomeAtPercentile(jpP, world);
-  const worldPct = formatPct(100 - percentile(income, world));
-  const burundiPct = formatPct(100 - percentile(income, burundi));
-  const others = selected.filter(c=>c.key!=='jp');
-  let lines = '';
-  if(others.length){
-    const diffs = others.map(c=>{
-      const eq = incomeAtPercentile(jpP, c);
-      const personLabel = c.personLabel ? c.personLabel.replace(/だったら$/,'だった') : (c.key==='world' ? '世界平均の国に生まれていた' : (c.name+'人だった'));
-      return `${personLabel}としたら、年収約<b>${Math.round(eq).toLocaleString()}万円</b>`;
-    });
-    lines = diffs.join('。') + '。';
-  }
-  const phantom = COUNTRIES.find(c=>c.key==='jp2');
+  const eqBurundi = incomeAtPercentile(jpP, burundi);
+  const eqUS = incomeAtPercentile(jpP, us);
   const eqPhantom = incomeAtPercentile(jpP, phantom);
+  const worldPctTop = formatPct(100 - percentile(income, world));
+
   document.getElementById('insightText').innerHTML =
-  `<b>「どこで生まれたか」がもたらす差</b><br>
-  年収<b>${income}万円</b>のあなたは、日本国内では上位約<b>${formatPct(100-jpP)}%</b>の位置です。同じ順位のまま生まれた国だけ変わると、${lines}<br><br>
-  今の日本は世界的には恵まれています。年収<b>${income}万円</b>は世界全体で上位<b>${worldPct}%</b>、ブルンジでは上位<b>${burundiPct}%</b>に相当します。${eqWorld < income ? `世界平均的な国に生まれていたとしたら、同じ立ち位置の年収は約<b>${Math.round(eqWorld).toLocaleString()}万円</b>です。` : ''}<br><br>
-  アメリカだったらもっと稼げていたのに、と思った方もいるかもしれません。実際、アメリカの曲線は日本よりかなり上の位置にあります。ただ、忘れてはいけないのは、<b>30年前の日本はアメリカより上にいた</b>という事実です。この30年でアメリカの一人当たりGDPは約2.9万→8.5万ドル（約3倍）に伸びた一方、日本は世界トップだった4.4万ドルから3.2万ドルへ後退しました。停滞も円安もなかった「幻の日本」なら、同じ順位の年収は約<b>${Math.round(eqPhantom).toLocaleString()}万円</b>だったはずです。<br><br>
-  グラフの線を動かすには、縦（上）と横（右）の二つの方向があります。線そのものを上に持ち上げるのか、今の線の上を右へ動くことに力を注ぐのか。どちらに、どれだけ関わるかは、それぞれの選択です。ただ、次にこの「国ガチャ」を引くのは、私たちの子供や孫です。`;
+  `<b>「どこで生まれたか」がもたらす差</b><br><br>
+  年収<b>${income}万円</b>のあなたは、日本国内では上位約<b>${formatPct(100-jpP)}%</b>の位置です。<br><br>
+  もし、その順位のまま生まれた国だけが違っていたら――<br><br>
+  世界平均的な国なら、年収は約<b>${Math.round(eqWorld).toLocaleString()}万円</b>。<br>
+  アメリカなら、約<b>${Math.round(eqUS).toLocaleString()}万円</b>。<br>
+  ブルンジなら、約<b>${Math.round(eqBurundi).toLocaleString()}万円</b>。<br>
+  そして、停滞も円安もなかった日本なら、約<b>${Math.round(eqPhantom).toLocaleString()}万円</b>です。<br><br>
+  一人の努力だけでは変えられないものがあります。その代表が、「どの国に生まれるか」です。<br><br>
+  今の日本でも、年収${income}万円は世界全体では上位<b>${worldPctTop}%</b>に入り、多くの国では十分に豊かな水準です。<br><br>
+  一方で、「もっと稼げたはずなのに」と感じた方もいるかもしれません。実は30年前、日本の経済水準はアメリカを上回っていました。その後30年で、アメリカの一人当たりGDPは約2.9万ドルから約8.5万ドルへ約3倍に成長しましたが、日本は世界トップクラスだった約4.4万ドルから約3.2万ドルへと後退しています。もし日本があの頃と同じ勢いで成長していたなら、同じ順位のあなたの年収は約<b>${Math.round(eqPhantom).toLocaleString()}万円</b>だったかもしれません。<br><br>
+  つまり、この線は運命ではありません。<br><br>
+  社会が変われば、線も動きます。<br><br>
+  そして、その線を動かしてきたのも、動かせなかったのも、私たち自身です。<br><br><br>
+  これから先、私たちには二つの選択があります。<br><br>
+  自分が今ある線の上を右へ進むこと。<br><br>
+  そして、社会全体の線そのものを上へ押し上げること。<br><br>
+  どちらも大切です。どちらに、どれだけ力を注ぐかは、一人ひとりが決められます。<br><br>
+  ただ一つ確かなことがあります。次にこの「国ガチャ」を引くのは、私たちではありません。私たちの子どもたち、そして、その先の世代です。<br><br>
+  だからこそ、自分の人生だけでなく、未来の社会という土台も育てていきたい。そんな人が一人でも増えれば、この線はきっと、もう一度動かせます。`;
 }
 
 function renderConceptDiagram(){
